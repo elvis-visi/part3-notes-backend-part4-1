@@ -2,6 +2,8 @@ const notesRouter = require('express').Router()
 const Note = require('../models/note')
 const User = require('../models/user')
 
+const jwt = require('jsonwebtoken')
+
 notesRouter.get('/', async (request, response) => {
   const notes = await Note
     .find({}).populate('user', { username: 1, name: 1 })
@@ -18,8 +20,24 @@ notesRouter.get('/:id', async (request, response) => {
   }
 })
 
+const getTokenFrom = request => {
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    return authorization.replace('Bearer ', '')
+  }
+  return null
+}
+
 notesRouter.post('/', async (request, response) => {
   const body = request.body
+
+  //decodes the token, or returns the Object which the token was based on
+  const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
+
+  if (!decodedToken.id) {
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
 
   const user = await User.findById(body.userId)
 
@@ -58,3 +76,24 @@ notesRouter.put('/:id', (request, response, next) => {
 })
 
 module.exports = notesRouter
+
+/*
+Limiting creating new notes to logged-in users post request must have a valid token note saved in the list of the user identified by the token
+ 
+There are several ways of sending the token from the browser to the server. We will use the Authorization header. The header also tells which authentication scheme is used
+This can be necessary if the server offers multiple ways to 
+authenticate. Identifying the scheme tells the server how the attached credentials should be interpreted.
+
+To create a note basically:
+1.log in get token
+1.1 then to create a token post request, in the authorization header -> scheme and auth credentials
+bearer + token 
+
+2. Now, get the authorization from the authorization header in the request
+2.1 decode it, if valid then proceed to add the note to the DB
+
+
+The object decoded from the token contains the username and id fields, which tell the server who made the request.
+
+If the token is missing or it is invalid, the exception JsonWebTokenError is raised. 
+*/

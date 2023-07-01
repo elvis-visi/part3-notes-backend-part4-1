@@ -22,28 +22,28 @@ notesRouter.get('/:id', async (request, response) => {
 
 const getTokenFrom = request => {
   const authorization = request.get('authorization')
-  if (authorization && authorization.startsWith('Bearer ')) {
-    return authorization.replace('Bearer ', '')
+  if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
+    return authorization.substring(7)
   }
   return null
 }
 
 notesRouter.post('/', async (request, response) => {
+  console.log(request.headers)
+
   const body = request.body
 
   //decodes the token, or returns the Object which the token was based on
   const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET)
-
   if (!decodedToken.id) {
     return response.status(401).json({ error: 'token invalid' })
   }
 
-
-  const user = await User.findById(body.userId)
+  const user = await User.findById(decodedToken.id)
 
   const note = new Note({
     content: body.content,
-    important: body.important || false,
+    important: body.important === undefined ? false : body.important,
     user: user.id
   })
 

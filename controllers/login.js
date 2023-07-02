@@ -28,8 +28,15 @@ loginRouter.post('/', async (request, response) => {
     }
 
     //signed digitally, making it impossible to falsify (with cryptographic means)
-    const token = jwt.sign(userForToken, process.env.SECRET)
+    const token = jwt.sign(
+        userForToken,
+        process.env.SECRET,
+        { expiresIn: 60 * 60 }
+    )
 
+    /*
+    Once the token expires, the client app needs to get a new token. Usually, this happens by forcing the user to re-login to the app.
+    */
     response
         .status(200)
         .send({ token, username: user.username, name: user.name })

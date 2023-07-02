@@ -1,12 +1,12 @@
 post http://localhost:3001/api/notes
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NDlmNWUxNTY0OWE2Y2U2YjVlODZiNTAiLCJpYXQiOjE2ODgyNDczMTd9.kedh_kuz1xjSQmPnDtvZ3hu94Z7oEdKv3Q0uznwNrG4
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1sdXVra2FpIiwiaWQiOiI2NDlmNWUxNTY0OWE2Y2U2YjVlODZiNTAiLCJpYXQiOjE2ODgzMjM4MzR9.IEqP9NoljTALTHA3Cw9vP88kRTrD6tT8qHfF5yVQuqQ
 
 
 
 
 {
-    "content": "note with token",
+    "content": "note with token2",
     "important": true
     
 }
